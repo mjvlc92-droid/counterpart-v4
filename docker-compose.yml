@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+
+  agent:
+    build:
+      context: ./apps/agent
+      dockerfile: Dockerfile
+    ports:
+      - "2024:2024"
+    env_file: .env
+    environment:
+      - AGENT_PORT=2024
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2024/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      - NEXT_PUBLIC_AGENT_URL=http://agent:2024
+      - NEXT_PUBLIC_MCP_URL=http://mcp:3001
+    depends_on:
+      agent:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mcp:
+    build:
+      context: ./apps/mcp
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - MCP_PORT=3001
+    restart: unless-stopped

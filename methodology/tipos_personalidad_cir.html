@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIR — Tipos de Personalidades Detectados</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #0d1f3c;
+    --navy-light: #152847;
+    --accent: #c9a84c;
+    --accent-light: #e8c97a;
+    --red: #e05252;
+    --green: #3db87a;
+    --blue: #4a90d9;
+    --purple: #7b5ea7;
+    --orange: #e07d3d;
+    --teal: #2bc5b4;
+    --white: #f4f6fa;
+    --gray: #8a9ab5;
+    --gray-light: #1e3154;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    line-height: 1.5;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #0c2a4a 100%);
+    padding: 60px 48px 48px;
+    border-bottom: 1px solid var(--gray-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(26px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--gray);
+    max-width: 680px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .section {
+    padding: 56px 32px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+  }
+
+  /* ── INTRO FRAMEWORK ── */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .fw-intro-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .fw-intro-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 auto 10px;
+  }
+
+  .fw-intro-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .fw-intro-desc { font-size: 11px; color: var(--gray); line-height: 1.4; }
+
+  /* ── OCEAN SECTION ── */
+  .ocean-profiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .ocean-profile-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .profile-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .profile-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .profile-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .ocean-mini-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 14px 0;
+  }
+
+  .omini-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .omini-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gray);
+    width: 12px;
+    font-weight: 600;
+  }
+
+  .omini-bar-bg {
+    flex: 1; height: 5px;
+    background: var(--gray-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .omini-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .omini-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    width: 18px;
+    text-align: right;
+  }
+
+  .profile-quote {
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--accent-light);
+    font-style: italic;
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+
+  .profile-cues {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .cue {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .cue-icon { min-width: 14px; }
+
+  /* ── DISC SECTION ── */
+  .disc-types-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .disc-type-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 24px;
+  }
+
+  .disc-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .disc-big-letter {
+    width: 80px; height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px;
+    font-weight: 800;
+  }
+
+  .disc-d-bg { background: rgba(224,82,82,0.15); border: 2px solid rgba(224,82,82,0.3); color: var(--red); }
+  .disc-i-bg { background: rgba(61,184,122,0.15); border: 2px solid rgba(61,184,122,0.3); color: var(--green); }
+  .disc-s-bg { background: rgba(74,144,217,0.15); border: 2px solid rgba(74,144,217,0.3); color: var(--blue); }
+  .disc-c-bg { background: rgba(123,94,167,0.15); border: 2px solid rgba(123,94,167,0.3); color: #a07bcc; }
+
+  .disc-keyword {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .disc-type-info h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .disc-type-desc {
+    font-size: 12px;
+    color: #9db0c8;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .disc-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .disc-signal {
+    font-size: 11px;
+    color: var(--gray);
+    display: flex;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .disc-signal strong { color: var(--accent); font-size: 10px; min-width: 70px; }
+
+  .disc-example-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--gray-light);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .disc-example-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .disc-example-text {
+    font-size: 11px;
+    color: var(--accent-light);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── VOSS SECTION ── */
+  .voss-types-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .voss-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px 22px;
+  }
+
+  .voss-card.analyst { border-top: 3px solid var(--purple); }
+  .voss-card.assertive { border-top: 3px solid var(--red); }
+  .voss-card.accommodator { border-top: 3px solid var(--green); }
+
+  .voss-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .voss-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .analyst .voss-pct { color: #a07bcc; }
+  .assertive .voss-pct { color: var(--red); }
+  .accommodator .voss-pct { color: var(--green); }
+
+  .voss-name-wrap h3 { font-size: 15px; font-weight: 700; }
+  .voss-name-wrap p { font-size: 11px; color: var(--gray); }
+
+  .voss-desc { font-size: 12px; color: #9db0c8; line-height: 1.6; margin-bottom: 16px; }
+
+  .voss-tactics {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .voss-tactic {
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+
+  .voss-tactic-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .analyst .voss-tactic-label { color: #a07bcc; }
+  .assertive .voss-tactic-label { color: var(--red); }
+  .accommodator .voss-tactic-label { color: var(--green); }
+
+  .voss-tactic p { font-size: 11px; color: var(--gray); line-height: 1.4; }
+
+  .voss-example-quote {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--accent-light);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── ARQUETIPOS SECTION ── */
+  .archetyp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .archetype-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px 24px;
+  }
+
+  .archetype-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .archetype-icon-name {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .arch-icon {
+    width: 50px; height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .arch-name { font-size: 16px; font-weight: 700; }
+  .arch-disc-voss { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+  .arch-weight {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-light);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .arch-quote {
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--accent);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--accent-light);
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .arch-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .arch-prop {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .arch-prop-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .arch-prop-text { font-size: 11px; color: #9db0c8; line-height: 1.4; }
+
+  .arch-figuras {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 12px;
+  }
+
+  .arch-figuras strong { color: var(--accent); }
+
+  .arch-frases {
+    margin-top: 14px;
+    border-top: 1px solid var(--gray-light);
+    padding-top: 14px;
+  }
+
+  .arch-frases-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .arch-frase {
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+    color: #9db0c8;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .arch-frase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    min-width: 16px;
+    padding-top: 1px;
+  }
+
+  /* ── MICE SECTION ── */
+  .mice-profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .mice-profile-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 22px 18px;
+    position: relative;
+  }
+
+  .mice-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .mice-profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .mice-profile-tag {
+    font-size: 10px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .mice-profile-desc {
+    font-size: 11px;
+    color: #9db0c8;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .mice-how-to {
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 11px;
+    color: var(--accent-light);
+  }
+
+  .mice-how-to strong {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .mice-example {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--gray);
+    border-top: 1px solid var(--gray-light);
+    padding-top: 10px;
+  }
+
+  .mice-example strong { color: var(--accent); font-size: 10px; }
+
+  /* ── CASO REAL ── */
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .case-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .case-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .case-name { font-size: 18px; font-weight: 700; }
+  .case-role { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+  .faf-score-small {
+    text-align: right;
+  }
+
+  .faf-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-light);
+    line-height: 1;
+  }
+
+  .faf-label-small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .case-frameworks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .cf-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cf-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 80px;
+    padding-top: 1px;
+  }
+
+  .cf-val { font-size: 12px; color: #9db0c8; line-height: 1.5; }
+  .cf-val strong { color: var(--white); }
+
+  .case-synthesis {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .case-synthesis-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .case-synthesis-text {
+    font-size: 12px;
+    color: var(--accent-light);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 32px;
+    text-align: center;
+    border-top: 1px solid var(--gray-light);
+  }
+
+  .footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  .footer span { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .intro-grid { grid-template-columns: repeat(2, 1fr); }
+    .ocean-profiles, .voss-types-grid { grid-template-columns: 1fr 1fr; }
+    .disc-types-grid, .archetyp-grid, .case-grid { grid-template-columns: 1fr; }
+    .mice-profiles-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .intro-grid, .ocean-profiles, .voss-types-grid, .mice-profiles-grid { grid-template-columns: 1fr; }
+    .disc-type-card { grid-template-columns: 1fr; }
+    .section { padding: 36px 16px; }
+    .hero { padding: 40px 20px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-tag">CIR v4.0 · Personalidades · 7 Frameworks de Triangulación</div>
+  <h1>Tipos de <span>Personalidad</span> en el Sistema CIR</h1>
+  <p class="hero-sub">El CIR no clasifica personas en un solo tipo: triangula 7 frameworks simultáneos para construir un perfil accionable. Esta guía explica qué detecta cada framework y qué significa para la negociación.</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── 01 · FRAMEWORKS DE TRIANGULACIÓN ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Los 7 Frameworks de Triangulación</h2>
+    </div>
+    <div class="intro-grid">
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(123,94,167,0.15);color:#a07bcc;border:1px solid rgba(123,94,167,0.3)">O</div>
+        <div class="fw-intro-name">OCEAN Big Five</div>
+        <div class="fw-intro-desc">Rasgos estables de personalidad. Predice cómo procesa información y reacciona bajo presión.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(74,144,217,0.15);color:#4a90d9;border:1px solid rgba(74,144,217,0.3)">D</div>
+        <div class="fw-intro-name">DISC</div>
+        <div class="fw-intro-desc">Estilo conductual en el trabajo. Define cómo actúa en situaciones de decisión.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(61,184,122,0.15);color:#3db87a;border:1px solid rgba(61,184,122,0.3)">V</div>
+        <div class="fw-intro-name">Voss Type</div>
+        <div class="fw-intro-desc">Tipo de negociador según Chris Voss. Cómo decide y responde a propuestas.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)">M</div>
+        <div class="fw-intro-name">MICE</div>
+        <div class="fw-intro-desc">Motivadores profundos: Money, Ideology, Coercion, Ego. Qué lo mueve a actuar.</div>
+      </div>
+    </div>
+    <div class="intro-grid">
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(224,82,82,0.15);color:#e05252;border:1px solid rgba(224,82,82,0.3)">A</div>
+        <div class="fw-intro-name">Arquetipos</div>
+        <div class="fw-intro-desc">Perfil narrativo que traduce los números a un personaje con frases y miedos concretos.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(43,197,180,0.15);color:#2bc5b4;border:1px solid rgba(43,197,180,0.3)">C</div>
+        <div class="fw-intro-name">Ekman/Navarro</div>
+        <div class="fw-intro-desc">Lenguaje corporal codificado. Posturas de apertura vs cierre con acciones tácticas.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(224,125,61,0.15);color:#e07d3d;border:1px solid rgba(224,125,61,0.3)">H</div>
+        <div class="fw-intro-name">Harvard NP</div>
+        <div class="fw-intro-desc">Posición vs interés real. BATNA y costos ocultos de la mejor alternativa.</div>
+      </div>
+      <div class="fw-intro-card">
+        <div class="fw-intro-icon" style="background:rgba(138,154,181,0.15);color:#8a9ab5;border:1px solid rgba(138,154,181,0.3)">P</div>
+        <div class="fw-intro-name">Miller Heiman</div>
+        <div class="fw-intro-desc">Presiones actuales y motivadores por rol. Timeline de vulnerabilidad decisoria.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 02 · OCEAN BIG FIVE ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>OCEAN Big Five — Perfiles de Personalidad</h2>
+    </div>
+    <div style="font-size:13px; color:var(--gray); margin-bottom:28px; max-width:760px; line-height:1.6;">
+      Lo que importa en OCEAN no son los valores medios, sino los <strong style="color:var(--accent)">extremos</strong> (8–10 o 1–3). Cada combinación de extremos define un patrón de comportamiento predecible en negociación.
+    </div>
+    <div class="ocean-profiles">
+
+      <!-- Perfil 1: El Analítico Riguroso -->
+      <div class="ocean-profile-card" style="border-top:3px solid #a07bcc">
+        <div class="profile-header">
+          <div class="profile-icon" style="background:rgba(123,94,167,0.15);border:1px solid rgba(123,94,167,0.3)">🔬</div>
+          <div>
+            <div class="profile-name">El Analítico Riguroso</div>
+            <span class="profile-tag" style="background:rgba(123,94,167,0.15);color:#a07bcc;border:1px solid rgba(123,94,167,0.3)">C↑ · N↓</span>
+          </div>
+        </div>
+        <div class="ocean-mini-bars">
+          <div class="omini-row"><span class="omini-label">O</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:60%;background:#a07bcc"></div></div><span class="omini-val" style="color:#a07bcc">6</span></div>
+          <div class="omini-row"><span class="omini-label">C</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:90%;background:#c9a84c"></div></div><span class="omini-val" style="color:#c9a84c">9↑</span></div>
+          <div class="omini-row"><span class="omini-label">E</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:40%;background:#a07bcc"></div></div><span class="omini-val" style="color:#a07bcc">4</span></div>
+          <div class="omini-row"><span class="omini-label">A</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:40%;background:#a07bcc"></div></div><span class="omini-val" style="color:#a07bcc">4</span></div>
+          <div class="omini-row"><span class="omini-label">N</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:30%;background:#3db87a"></div></div><span class="omini-val" style="color:#3db87a">3↓</span></div>
+        </div>
+        <div class="profile-quote">"Si no puedes modelarlo, no puedes defenderlo."</div>
+        <div class="profile-cues">
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Exige ver la metodología antes del resultado</span></div>
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Silencio prolongado = análisis, no rechazo</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>No cede a urgencia artificial (N bajo)</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>Rechaza promesas sin respaldo cuantitativo</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          <strong style="color:var(--accent)">Ejemplo real:</strong> Felipe Givovich Díaz — QyA Consultores
+        </div>
+      </div>
+
+      <!-- Perfil 2: El Visionario Extrovertido -->
+      <div class="ocean-profile-card" style="border-top:3px solid #3db87a">
+        <div class="profile-header">
+          <div class="profile-icon" style="background:rgba(61,184,122,0.15);border:1px solid rgba(61,184,122,0.3)">💡</div>
+          <div>
+            <div class="profile-name">El Visionario Extrovertido</div>
+            <span class="profile-tag" style="background:rgba(61,184,122,0.15);color:#3db87a;border:1px solid rgba(61,184,122,0.3)">O↑ · E↑</span>
+          </div>
+        </div>
+        <div class="ocean-mini-bars">
+          <div class="omini-row"><span class="omini-label">O</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:90%;background:#c9a84c"></div></div><span class="omini-val" style="color:#c9a84c">9↑</span></div>
+          <div class="omini-row"><span class="omini-label">C</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:50%;background:#3db87a"></div></div><span class="omini-val" style="color:#3db87a">5</span></div>
+          <div class="omini-row"><span class="omini-label">E</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:85%;background:#c9a84c"></div></div><span class="omini-val" style="color:#c9a84c">8↑</span></div>
+          <div class="omini-row"><span class="omini-label">A</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:65%;background:#3db87a"></div></div><span class="omini-val" style="color:#3db87a">6</span></div>
+          <div class="omini-row"><span class="omini-label">N</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:50%;background:#3db87a"></div></div><span class="omini-val" style="color:#3db87a">5</span></div>
+        </div>
+        <div class="profile-quote">"Cuéntame el impacto grande primero, después los detalles."</div>
+        <div class="profile-cues">
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Responde a narrativas de transformación y visión</span></div>
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Genera referencias espontáneas si ve valor</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>Se aburre con detalles técnicos excesivos</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>No decide solo: necesita que su red valide</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          <strong style="color:var(--accent)">Táctica clave:</strong> Empieza con el "por qué" antes del "cómo"
+        </div>
+      </div>
+
+      <!-- Perfil 3: El Estabilizador Precavido -->
+      <div class="ocean-profile-card" style="border-top:3px solid #4a90d9">
+        <div class="profile-header">
+          <div class="profile-icon" style="background:rgba(74,144,217,0.15);border:1px solid rgba(74,144,217,0.3)">🛡️</div>
+          <div>
+            <div class="profile-name">El Estabilizador Precavido</div>
+            <span class="profile-tag" style="background:rgba(74,144,217,0.15);color:#4a90d9;border:1px solid rgba(74,144,217,0.3)">A↑ · N↑</span>
+          </div>
+        </div>
+        <div class="ocean-mini-bars">
+          <div class="omini-row"><span class="omini-label">O</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:40%;background:#4a90d9"></div></div><span class="omini-val" style="color:#4a90d9">4</span></div>
+          <div class="omini-row"><span class="omini-label">C</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:60%;background:#4a90d9"></div></div><span class="omini-val" style="color:#4a90d9">6</span></div>
+          <div class="omini-row"><span class="omini-label">E</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:50%;background:#4a90d9"></div></div><span class="omini-val" style="color:#4a90d9">5</span></div>
+          <div class="omini-row"><span class="omini-label">A</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:85%;background:#c9a84c"></div></div><span class="omini-val" style="color:#c9a84c">8↑</span></div>
+          <div class="omini-row"><span class="omini-label">N</span><div class="omini-bar-bg"><div class="omini-bar-fill" style="width:80%;background:#e05252"></div></div><span class="omini-val" style="color:#e05252">8↑</span></div>
+        </div>
+        <div class="profile-quote">"¿Qué pasa si esto no funciona? ¿Quién responde?"</div>
+        <div class="profile-cues">
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Responde a casos de éxito verificables y referencias</span></div>
+          <div class="cue"><span class="cue-icon" style="color:#3db87a">✓</span><span>Necesita ver el plan de contingencia antes de decidir</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>La urgencia artificial lo paraliza más</span></div>
+          <div class="cue"><span class="cue-icon" style="color:var(--red)">✗</span><span>Requiere múltiples interacciones para confiar</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          <strong style="color:var(--accent)">Táctica clave:</strong> Ofrecer piloto de bajo riesgo con opción de salida clara
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 03 · DISC ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>DISC — Los 4 Cuadrantes Conductuales</h2>
+    </div>
+    <div class="disc-types-grid">
+
+      <!-- D -->
+      <div class="disc-type-card">
+        <div class="disc-visual">
+          <div class="disc-big-letter disc-d-bg">D</div>
+          <div class="disc-keyword" style="color:var(--red)">Dominancia<br>Resultados</div>
+        </div>
+        <div class="disc-type-info">
+          <h3>Dominante — Orientado a Resultados</h3>
+          <p class="disc-type-desc">Toma decisiones rápido, habla directo, no le gustan los rodeos. Le importa el impacto final, no el proceso. Puede ser agresivo en negociación.</p>
+          <div class="disc-signals">
+            <div class="disc-signal"><strong>Habla de:</strong> Resultados, plazos, eficiencia, impacto</div>
+            <div class="disc-signal"><strong>Evita:</strong> Detalles largos, procesos, explicaciones extensas</div>
+            <div class="disc-signal"><strong>Táctica:</strong> Ve directo al ROI. 3 puntos máximo. Sin preamble.</div>
+          </div>
+          <div class="disc-example-box">
+            <div class="disc-example-label">Frase de apertura efectiva</div>
+            <div class="disc-example-text">"En 6 meses las firmas que implementaron esto redujeron costos de auditoría en 40%. ¿Cuánto vale eso en tu operación?"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- I -->
+      <div class="disc-type-card">
+        <div class="disc-visual">
+          <div class="disc-big-letter disc-i-bg">I</div>
+          <div class="disc-keyword" style="color:var(--green)">Influencia<br>Personas</div>
+        </div>
+        <div class="disc-type-info">
+          <h3>Influyente — Orientado a Personas</h3>
+          <p class="disc-type-desc">Decide por relación y entusiasmo. Necesita que sus pares validen la decisión. Alto impacto social en la organización. Puede over-promise.</p>
+          <div class="disc-signals">
+            <div class="disc-signal"><strong>Habla de:</strong> Relaciones, quién más lo usa, visibilidad</div>
+            <div class="disc-signal"><strong>Evita:</strong> Análisis fríos, decisiones en solitario</div>
+            <div class="disc-signal"><strong>Táctica:</strong> Nómbrales otros clientes similares. Construye imagen de comunidad.</div>
+          </div>
+          <div class="disc-example-box">
+            <div class="disc-example-label">Frase de apertura efectiva</div>
+            <div class="disc-example-text">"Tres estudios en Chile ya lo usan para AMSA — y los socios que lo implementaron se convirtieron en referentes del área tech en sus firmas."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S -->
+      <div class="disc-type-card">
+        <div class="disc-visual">
+          <div class="disc-big-letter disc-s-bg">S</div>
+          <div class="disc-keyword" style="color:#4a90d9">Estabilidad<br>Continuidad</div>
+        </div>
+        <div class="disc-type-info">
+          <h3>Estable — Orientado a Continuidad</h3>
+          <p class="disc-type-desc">Prefiere cambio incremental sobre transformación radical. Leal, consistente, evita el conflicto. Necesita tiempo para procesar antes de decidir.</p>
+          <div class="disc-signals">
+            <div class="disc-signal"><strong>Habla de:</strong> Continuidad, equipo, proceso gradual, riesgo</div>
+            <div class="disc-signal"><strong>Evita:</strong> Cambios bruscos, presión de cierre</div>
+            <div class="disc-signal"><strong>Táctica:</strong> Empieza con piloto pequeño. Nunca fuerce el cierre.</div>
+          </div>
+          <div class="disc-example-box">
+            <div class="disc-example-label">Frase de apertura efectiva</div>
+            <div class="disc-example-text">"No se trata de reemplazar lo que funciona — se trata de agregar una capa de eficiencia encima de tu proceso actual, sin tocar lo que ya tienes."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C -->
+      <div class="disc-type-card">
+        <div class="disc-visual">
+          <div class="disc-big-letter disc-c-bg">C</div>
+          <div class="disc-keyword" style="color:#a07bcc">Consciencia<br>Exactitud</div>
+        </div>
+        <div class="disc-type-info">
+          <h3>Concienzudo — Orientado a Exactitud</h3>
+          <p class="disc-type-desc">Analiza antes de decidir. Exige documentación, metodología y pruebas. Puede parecer frío — es sistemático. El proceso correcto importa tanto como el resultado.</p>
+          <div class="disc-signals">
+            <div class="disc-signal"><strong>Habla de:</strong> Metodología, tasa de error, documentación</div>
+            <div class="disc-signal"><strong>Evita:</strong> Afirmaciones sin respaldo, demos superficiales</div>
+            <div class="disc-signal"><strong>Táctica:</strong> Muestra el proceso, no solo el output. Entrega documentación.</div>
+          </div>
+          <div class="disc-example-box">
+            <div class="disc-example-label">Frase de apertura efectiva</div>
+            <div class="disc-example-text">"Antes de mostrarte el resultado, te voy a mostrar exactamente cómo llega el sistema a ese número — cada paso, cada fuente, cada validación."</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 04 · VOSS TYPES ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Voss Negotiation Types — Cómo Decide Cada Uno</h2>
+    </div>
+    <div class="voss-types-grid">
+
+      <!-- ANALYST -->
+      <div class="voss-card analyst">
+        <div class="voss-header">
+          <div class="voss-pct">5–10%</div>
+          <div class="voss-name-wrap">
+            <h3>El Analista</h3>
+            <p>Decide post-evidencia</p>
+          </div>
+        </div>
+        <p class="voss-desc">El tipo más difícil de leer. Procesa internamente antes de responder. Sus silencios no son rechazo — son análisis. Su "sí" llega tarde pero es completamente vinculante.</p>
+        <div class="voss-tactics">
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Cómo cerrar</div>
+            <p>Entrega datos verificables antes de cualquier argumento de beneficio. Deja espacio al silencio. No interrumpas el procesamiento.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Señal de cierre real</div>
+            <p>Pide especificaciones técnicas por escrito para revisar post-reunión. Pregunta por implementación piloto.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Error fatal</div>
+            <p>Interpretar el silencio como rechazo y acelerar. Presionar antes de que termine de procesar.</p>
+          </div>
+        </div>
+        <div class="voss-example-quote">Ejemplo: Felipe Givovich — ANALYST puro. Silencio = procesamiento. Cierre con especificaciones técnicas documentadas.</div>
+      </div>
+
+      <!-- ASSERTIVE -->
+      <div class="voss-card assertive">
+        <div class="voss-header">
+          <div class="voss-pct">30%</div>
+          <div class="voss-name-wrap">
+            <h3>El Asertivo</h3>
+            <p>Decide por dominio</p>
+          </div>
+        </div>
+        <p class="voss-desc">Directo, orientado a resultados, no le gustan las conversaciones largas. Respeta a quien va al punto. Puede parecer agresivo — en realidad está evaluando si eres competente.</p>
+        <div class="voss-tactics">
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Cómo cerrar</div>
+            <p>Sé directo. 3 puntos clave. Respeta su tiempo. Si pregunta por precio, dilo sin titubear.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Señal de cierre real</div>
+            <p>Te pregunta "¿cuándo podemos empezar?" o habla de tiempos de implementación.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Error fatal</div>
+            <p>Dar vueltas, pedir disculpas o titubear. Percibirá debilidad y perderás credibilidad.</p>
+          </div>
+        </div>
+        <div class="voss-example-quote">Táctica de apertura: "Te traigo 3 cosas. La primera: lo que necesitas. La segunda: cómo funciona. La tercera: qué pasa si decides mañana."</div>
+      </div>
+
+      <!-- ACCOMMODATOR -->
+      <div class="voss-card accommodator">
+        <div class="voss-header">
+          <div class="voss-pct">50–65%</div>
+          <div class="voss-name-wrap">
+            <h3>El Conciliador</h3>
+            <p>Decide por relación</p>
+          </div>
+        </div>
+        <p class="voss-desc">El tipo más común. Decide cuando confía en la persona. La relación importa antes que la propuesta. Puede decir "sí" para complacer — su sí real llega cuando introduce a otros.</p>
+        <div class="voss-tactics">
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Cómo cerrar</div>
+            <p>Invierte en rapport antes de hablar de producto. Pregunta por su contexto personal antes de proponer.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Señal de cierre real</div>
+            <p>Menciona a un colega que "debería ver esto". Propone agendar demo con otros del equipo.</p>
+          </div>
+          <div class="voss-tactic">
+            <div class="voss-tactic-label">Error fatal</div>
+            <p>Ir directo al pitch sin construir relación primero. Confundir su amabilidad con interés de compra.</p>
+          </div>
+        </div>
+        <div class="voss-example-quote">Táctica de apertura: Empieza con "¿Cómo lleva el equipo el proceso actualmente?" — deja que hable de su contexto antes de cualquier demo.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 05 · MICE ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>MICE — Los 4 Motivadores Profundos</h2>
+    </div>
+    <div class="mice-profiles-grid">
+
+      <!-- MONEY -->
+      <div class="mice-profile-card" style="border-top:3px solid #3db87a">
+        <div class="mice-letter" style="color:rgba(61,184,122,0.3)">M</div>
+        <div class="mice-profile-name">Money</div>
+        <div class="mice-profile-tag">Motivador Económico</div>
+        <p class="mice-profile-desc">Actúa cuando ve una mejora clara y cuantificable en sus métricas financieras. ROI, reducción de costos, incremento de ingresos.</p>
+        <div class="mice-how-to">
+          <strong>Cómo activarlo</strong>
+          Habla de ROI, costo de no actuar, y comparación con la competencia. Usa números.
+        </div>
+        <div class="mice-example">
+          <strong>Ejemplo:</strong> "Cada informe que automatizas vale X horas de un senior. En un año son $Y en tiempo recuperado."
+        </div>
+      </div>
+
+      <!-- IDEOLOGY -->
+      <div class="mice-profile-card" style="border-top:3px solid #c9a84c">
+        <div class="mice-letter" style="color:rgba(201,168,76,0.3)">I</div>
+        <div class="mice-profile-name">Ideology</div>
+        <div class="mice-profile-tag">Convicción Metodológica</div>
+        <p class="mice-profile-desc">Actúa cuando algo está alineado con su visión de cómo debería hacerse el trabajo. Metodología, rigor, integridad profesional.</p>
+        <div class="mice-how-to">
+          <strong>Cómo activarlo</strong>
+          Habla de principios, metodología y valores del trabajo bien hecho. No del precio.
+        </div>
+        <div class="mice-example">
+          <strong>Ejemplo real (Givovich):</strong> "La trazabilidad completa te permite defender cada número ante cualquier tribunal."
+        </div>
+      </div>
+
+      <!-- COERCION -->
+      <div class="mice-profile-card" style="border-top:3px solid #e05252">
+        <div class="mice-letter" style="color:rgba(224,82,82,0.3)">C</div>
+        <div class="mice-profile-name">Coercion</div>
+        <div class="mice-profile-tag">Presión Externa</div>
+        <p class="mice-profile-desc">Actúa cuando siente que no actuar tiene un costo real y urgente. Riesgo regulatorio, competidores, deadline de entrega.</p>
+        <div class="mice-how-to">
+          <strong>Cómo activarlo</strong>
+          Habla de lo que pierde si no actúa ahora. Usa benchmarks de competidores. No finjas urgencia.
+        </div>
+        <div class="mice-example">
+          <strong>Ejemplo:</strong> "Las firmas que no automatizaron en 2024 perdieron 15% de licitaciones frente a las que sí lo hicieron."
+        </div>
+      </div>
+
+      <!-- EGO -->
+      <div class="mice-profile-card" style="border-top:3px solid #7b5ea7">
+        <div class="mice-letter" style="color:rgba(123,94,167,0.3)">E</div>
+        <div class="mice-profile-name">Ego</div>
+        <div class="mice-profile-tag">Status y Reconocimiento</div>
+        <p class="mice-profile-desc">Actúa cuando la decisión confirma su posición como líder o referente. Ser el primero, ser citado, ser reconocido.</p>
+        <div class="mice-how-to">
+          <strong>Cómo activarlo</strong>
+          Habla de liderazgo en el área, de ser referente, de lo que implica ser el que tomó esta decisión.
+        </div>
+        <div class="mice-example">
+          <strong>Ejemplo:</strong> "Los que implementen esto primero en Chile van a definir el estándar del sector para los próximos 5 años."
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 06 · ARQUETIPOS ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Arquetipos — Los 4 Perfiles Narrativos del CIR</h2>
+    </div>
+    <div style="font-size:13px; color:var(--gray); margin-bottom:28px; max-width:760px; line-height:1.6;">
+      Los arquetipos traducen los frameworks a un <strong style="color:var(--accent)">personaje visualizable</strong>. Cada informe asigna un arquetipo primario (72–80%) y uno secundario (20–28%). El secundario emerge bajo estrés o cuando el tema lo activa.
+    </div>
+    <div class="archetyp-grid">
+
+      <!-- Arquitecto de Evidencia -->
+      <div class="archetype-card" style="border-left:3px solid #a07bcc">
+        <div class="archetype-header">
+          <div class="archetype-icon-name">
+            <div class="arch-icon" style="background:rgba(123,94,167,0.15);border:1px solid rgba(123,94,167,0.3);font-size:24px">🏗️</div>
+            <div>
+              <div class="arch-name">El Arquitecto de Evidencia</div>
+              <div class="arch-disc-voss">DISC: C primario · Voss: ANALYST</div>
+            </div>
+          </div>
+          <div class="arch-weight">72%</div>
+        </div>
+        <div class="arch-quote">"Si no puedes modelarlo, no puedes defenderlo ante un tribunal."</div>
+        <div class="arch-grid-3">
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#a07bcc">Señal cierre</div>
+            <div class="arch-prop-text">Pide specs técnicas por escrito para revisar después</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#a07bcc">Palanca clave</div>
+            <div class="arch-prop-text">Trazabilidad completa + metodología verificable</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#a07bcc">Miedo primario</div>
+            <div class="arch-prop-text">Quedar expuesto en un tribunal por output no auditable</div>
+          </div>
+        </div>
+        <div class="arch-figuras"><strong>Figuras de referencia:</strong> Keynes · Friedman · Harberger</div>
+        <div class="arch-frases">
+          <div class="arch-frases-label">Frases Calibradas</div>
+          <div class="arch-frase"><span class="arch-frase-num">01</span><span>"Antes de mostrarte el resultado, te voy a mostrar exactamente cómo llega el sistema a ese número — cada paso, cada fuente, cada validación."</span></div>
+          <div class="arch-frase"><span class="arch-frase-num">02</span><span>"Una de las razones por las que desarrollamos trazabilidad completa es que el output tiene que poder ser defendido ante cualquier panel arbitral."</span></div>
+          <div class="arch-frase"><span class="arch-frase-num">03</span><span>"¿En qué casos crees que una automatización así podría fallar en tu contexto?" — luego aborda cada escenario.</span></div>
+        </div>
+      </div>
+
+      <!-- Guardián Regulatorio -->
+      <div class="archetype-card" style="border-left:3px solid #4a90d9">
+        <div class="archetype-header">
+          <div class="archetype-icon-name">
+            <div class="arch-icon" style="background:rgba(74,144,217,0.15);border:1px solid rgba(74,144,217,0.3);font-size:24px">⚖️</div>
+            <div>
+              <div class="arch-name">El Guardián Regulatorio</div>
+              <div class="arch-disc-voss">DISC: C/S · Voss: ANALYST-ASSERTIVE</div>
+            </div>
+          </div>
+          <div class="arch-weight">28%</div>
+        </div>
+        <div class="arch-quote">"En regulación, el proceso correcto importa tanto como el resultado."</div>
+        <div class="arch-grid-3">
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#4a90d9">Señal cierre</div>
+            <div class="arch-prop-text">Pregunta sobre governance y control de acceso</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#4a90d9">Palanca clave</div>
+            <div class="arch-prop-text">Adaptabilidad a cambios normativos + auditabilidad</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#4a90d9">Miedo primario</div>
+            <div class="arch-prop-text">Eficiencia sin auditabilidad = riesgo de compliance</div>
+          </div>
+        </div>
+        <div class="arch-figuras"><strong>Figuras de referencia:</strong> Harberger · Tirole · FNE Chile</div>
+        <div class="arch-frases">
+          <div class="arch-frases-label">Frases Calibradas</div>
+          <div class="arch-frase"><span class="arch-frase-num">01</span><span>"Entendemos que los informes periciales para casos de colusión requieren metodología impecable — la herramienta facilita, no complica, la defensa de cada número."</span></div>
+          <div class="arch-frase"><span class="arch-frase-num">02</span><span>"¿Cómo funciona actualmente tu proceso de QA en los informes de mayor exposición?"</span></div>
+        </div>
+      </div>
+
+      <!-- Ejecutor de Resultados -->
+      <div class="archetype-card" style="border-left:3px solid #e05252">
+        <div class="archetype-header">
+          <div class="archetype-icon-name">
+            <div class="arch-icon" style="background:rgba(224,82,82,0.15);border:1px solid rgba(224,82,82,0.3);font-size:24px">🎯</div>
+            <div>
+              <div class="arch-name">El Ejecutor de Resultados</div>
+              <div class="arch-disc-voss">DISC: D primario · Voss: ASSERTIVE</div>
+            </div>
+          </div>
+          <div class="arch-weight">—</div>
+        </div>
+        <div class="arch-quote">"No me cuentes el proceso. Cuéntame el impacto."</div>
+        <div class="arch-grid-3">
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#e05252">Señal cierre</div>
+            <div class="arch-prop-text">Pregunta "¿cuándo podemos empezar?" antes de que termines</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#e05252">Palanca clave</div>
+            <div class="arch-prop-text">ROI claro, timeline corto, resultados medibles</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#e05252">Miedo primario</div>
+            <div class="arch-prop-text">Perder tiempo en implementaciones que no entregan</div>
+          </div>
+        </div>
+        <div class="arch-figuras"><strong>Figuras de referencia:</strong> Jobs · Musk · Bezos (estilo ejecutivo)</div>
+        <div class="arch-frases">
+          <div class="arch-frases-label">Frases Calibradas</div>
+          <div class="arch-frase"><span class="arch-frase-num">01</span><span>"Te traigo 3 cosas: cuánto tiempo ahorra, cuánto cuesta, y qué pasa si decides esta semana."</span></div>
+          <div class="arch-frase"><span class="arch-frase-num">02</span><span>"¿Cuál es el proceso que más tiempo te consume ahora mismo? Empezamos por ahí."</span></div>
+        </div>
+      </div>
+
+      <!-- Constructor de Redes -->
+      <div class="archetype-card" style="border-left:3px solid #3db87a">
+        <div class="archetype-header">
+          <div class="archetype-icon-name">
+            <div class="arch-icon" style="background:rgba(61,184,122,0.15);border:1px solid rgba(61,184,122,0.3);font-size:24px">🌐</div>
+            <div>
+              <div class="arch-name">El Constructor de Redes</div>
+              <div class="arch-disc-voss">DISC: I primario · Voss: ACCOMMODATOR</div>
+            </div>
+          </div>
+          <div class="arch-weight">—</div>
+        </div>
+        <div class="arch-quote">"¿Quién más en el sector ya lo usa? ¿Puedo hablar con ellos?"</div>
+        <div class="arch-grid-3">
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#3db87a">Señal cierre</div>
+            <div class="arch-prop-text">Menciona un colega específico que "debería ver esto"</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#3db87a">Palanca clave</div>
+            <div class="arch-prop-text">Social proof + posicionamiento como referente en su red</div>
+          </div>
+          <div class="arch-prop">
+            <div class="arch-prop-label" style="color:#3db87a">Miedo primario</div>
+            <div class="arch-prop-text">Quedar fuera de la conversación de su sector</div>
+          </div>
+        </div>
+        <div class="arch-figuras"><strong>Figuras de referencia:</strong> Connectors del tipo Gladwell · Early adopters</div>
+        <div class="arch-frases">
+          <div class="arch-frases-label">Frases Calibradas</div>
+          <div class="arch-frase"><span class="arch-frase-num">01</span><span>"Las tres firmas más referenciadas en compliance en Chile están evaluando esto en Q2. ¿Quieres estar en esa conversación desde el principio?"</span></div>
+          <div class="arch-frase"><span class="arch-frase-num">02</span><span>"¿Hay alguien en tu equipo o red que debería ver la demo contigo?"</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 07 · CASO REAL ── -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Caso Real — Felipe Givovich: Triangulación Completa</h2>
+    </div>
+    <div class="case-grid">
+
+      <div class="case-card">
+        <div class="case-header">
+          <div>
+            <div class="case-name">Felipe Givovich Díaz</div>
+            <div class="case-role">Economista Senior / Partner · QyA Consultores</div>
+          </div>
+          <div class="faf-score-small">
+            <div class="faf-num">38</div>
+            <div class="faf-label-small">FAF / 50</div>
+          </div>
+        </div>
+        <div class="case-frameworks">
+          <div class="cf-row">
+            <span class="cf-key">OCEAN</span>
+            <span class="cf-val"><strong>O:6 C:9 E:4 A:4 N:3</strong> — Consciencia extrema, estable bajo presión, introvertido</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-key">DISC</span>
+            <span class="cf-val"><strong>C primario / D emergente</strong> — Exactitud primero, cada vez más directivo (socio 2026)</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-key">Voss</span>
+            <span class="cf-val"><strong>ANALYST puro</strong> — Silencio = procesamiento. Su "sí" llega tarde pero es vinculante</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-key">MICE</span>
+            <span class="cf-val"><strong>I (Ideología) dominante · E (Ego) emergente</strong> — Cree en rigor metodológico + autoridad de nuevo socio</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-key">Arquetipo</span>
+            <span class="cf-val"><strong>Arquitecto de Evidencia (72%)</strong> + Guardián Regulatorio (28%)</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-key">Presiones</span>
+            <span class="cf-val"><strong>Alta:</strong> Establecer QyA sin Quiroz · Competir con firmas más grandes · Gestionar equipo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div style="font-size:13px; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; font-family:'JetBrains Mono',monospace; font-size:10px;">Traducción Táctica Completa</div>
+        <div class="case-synthesis" style="margin-bottom:16px">
+          <div class="case-synthesis-label">Síntesis Operativa (60 segundos)</div>
+          <div class="case-synthesis-text">"Economista-abogado híbrido de élite con rigor analítico extremo y experiencia en litigios de alto perfil; responde a evidencia cuantificable y metodología sólida, rechaza aproximaciones superficiales."</div>
+        </div>
+        <div class="case-synthesis" style="background:rgba(61,184,122,0.05);border-color:rgba(61,184,122,0.2); margin-bottom:16px">
+          <div class="case-synthesis-label" style="color:#3db87a">El Argumento que Mueve la Decisión</div>
+          <div class="case-synthesis-text">"La automatización te devuelve horas de trabajo mecánico para dedicarlas al análisis que solo tú puedes hacer — y cada output viene con trazabilidad completa que puedes defender ante cualquier tribunal o panel arbitral."</div>
+        </div>
+        <div style="background:rgba(224,82,82,0.05);border:1px solid rgba(224,82,82,0.15);border-radius:8px;padding:14px 16px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#e05252;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Errores que Destruyen la Reunión</div>
+          <div style="font-size:11px;color:#9db0c8;display:flex;flex-direction:column;gap:6px;">
+            <div>✗ Interpretar su silencio como rechazo y acelerar el pitch</div>
+            <div>✗ Preguntar "¿ya conoces ChatGPT?" — lo infantiliza</div>
+            <div>✗ Hablar de eficiencia sin hablar de trazabilidad primero</div>
+            <div>✗ Proponer precio antes de mostrar metodología</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  <p><span>CIR v4.0</span> · Tipos de Personalidad · Sistema de Inteligencia de Contrapartes · <span>2026</span></p>
+</div>
+
+</body>
+</html>

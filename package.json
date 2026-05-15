@@ -1,0 +1,21 @@
+{
+  "name": "counterpart-v4",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/mcp"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:agent\" \"npm run dev:frontend\" \"npm run dev:mcp\"",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:mcp": "npm run dev --workspace=apps/mcp",
+    "dev:agent": "cd apps/agent && langgraph dev --port 2024",
+    "install:all": "npm install && cd apps/agent && pip install -e .",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "cd apps/agent && pytest tests/unit -v",
+    "test:e2e": "cd tests/e2e && npx playwright test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIR — Cómo Leer un Informe de Inteligencia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #0d1f3c;
+    --navy-light: #152847;
+    --accent: #c9a84c;
+    --accent-light: #e8c97a;
+    --red: #e05252;
+    --green: #3db87a;
+    --blue: #4a90d9;
+    --purple: #7b5ea7;
+    --white: #f4f6fa;
+    --gray: #8a9ab5;
+    --gray-light: #1e3154;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    line-height: 1.5;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #0c2a4a 100%);
+    padding: 60px 48px 48px;
+    border-bottom: 1px solid var(--gray-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--gray);
+    max-width: 620px;
+    margin-bottom: 36px;
+  }
+
+  .framework-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    background: var(--gray-light);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--accent-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .section {
+    padding: 56px 32px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  /* ── FORMATOS CARDS ── */
+  .formats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .format-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .format-card.extensa { border-top: 3px solid var(--blue); }
+  .format-card.media { border-top: 3px solid var(--accent); }
+  .format-card.marshall { border-top: 3px solid var(--green); }
+
+  .format-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+
+  .extensa .format-badge { background: rgba(74,144,217,0.15); color: var(--blue); border: 1px solid rgba(74,144,217,0.3); }
+  .media .format-badge { background: rgba(201,168,76,0.15); color: var(--accent-light); border: 1px solid rgba(201,168,76,0.3); }
+  .marshall .format-badge { background: rgba(61,184,122,0.15); color: var(--green); border: 1px solid rgba(61,184,122,0.3); }
+
+  .format-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .format-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 12px 0 4px;
+  }
+
+  .extensa .format-time { color: var(--blue); }
+  .media .format-time { color: var(--accent-light); }
+  .marshall .format-time { color: var(--green); }
+
+  .format-when {
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .format-desc {
+    font-size: 13px;
+    color: #9db0c8;
+    line-height: 1.6;
+  }
+
+  .format-list {
+    margin-top: 16px;
+    list-style: none;
+  }
+
+  .format-list li {
+    font-size: 12px;
+    color: var(--gray);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .format-list li::before {
+    content: '—';
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  /* ── ANATOMY ── */
+  .anatomy-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .report-mockup {
+    background: var(--navy-mid);
+    border: 1px solid var(--gray-light);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  .mockup-header {
+    background: linear-gradient(135deg, var(--navy), #112244);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .mockup-code { color: var(--accent); font-size: 10px; margin-bottom: 8px; letter-spacing: 1px; }
+  .mockup-name { color: var(--white); font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .mockup-role { color: var(--gray); font-size: 10px; }
+  .mockup-faf { color: var(--green); font-size: 11px; margin-top: 10px; }
+
+  .mockup-section {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 4px;
+    padding: 8px;
+  }
+
+  .mockup-section:hover { background: var(--gray-light); }
+
+  .mockup-section-label { color: var(--accent); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+  .mockup-section-title { color: var(--white); font-size: 11px; margin-top: 2px; }
+  .mockup-section-desc { color: var(--gray); font-size: 9px; margin-top: 2px; }
+
+  .sections-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .section-item {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 16px;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+
+  .section-item:hover { border-color: var(--accent); }
+
+  .section-num-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gray-light);
+    line-height: 1;
+  }
+
+  .section-item h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .section-item p {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+
+  .priority-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .p-critical { background: rgba(224,82,82,0.15); color: var(--red); border: 1px solid rgba(224,82,82,0.3); }
+  .p-high { background: rgba(201,168,76,0.15); color: var(--accent-light); border: 1px solid rgba(201,168,76,0.3); }
+  .p-medium { background: rgba(74,144,217,0.15); color: var(--blue); border: 1px solid rgba(74,144,217,0.3); }
+
+  /* ── FRAMEWORKS ── */
+  .frameworks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .framework-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .fw-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .fw-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .fw-ocean { background: rgba(123,94,167,0.2); color: #a07bcc; border: 1px solid rgba(123,94,167,0.3); }
+  .fw-disc { background: rgba(74,144,217,0.2); color: var(--blue); border: 1px solid rgba(74,144,217,0.3); }
+  .fw-voss { background: rgba(61,184,122,0.2); color: var(--green); border: 1px solid rgba(61,184,122,0.3); }
+  .fw-mice { background: rgba(201,168,76,0.2); color: var(--accent-light); border: 1px solid rgba(201,168,76,0.3); }
+  .fw-arch { background: rgba(224,82,82,0.2); color: var(--red); border: 1px solid rgba(224,82,82,0.3); }
+  .fw-body { background: rgba(138,154,181,0.2); color: var(--gray); border: 1px solid rgba(138,154,181,0.3); }
+
+  .fw-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .fw-sub {
+    font-size: 11px;
+    color: var(--gray);
+  }
+
+  .fw-body-text {
+    font-size: 12px;
+    color: #9db0c8;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  /* OCEAN bars */
+  .ocean-bars { display: flex; flex-direction: column; gap: 6px; }
+  .ocean-row { display: flex; align-items: center; gap: 10px; }
+  .ocean-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--gray);
+    width: 14px;
+    font-weight: 600;
+  }
+  .ocean-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--gray-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .ocean-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  }
+  .ocean-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent-light);
+    width: 24px;
+    text-align: right;
+  }
+
+  /* DISC matrix */
+  .disc-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .disc-cell {
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    position: relative;
+  }
+
+  .disc-d { background: rgba(224,82,82,0.12); color: var(--red); border: 1px solid rgba(224,82,82,0.2); }
+  .disc-i { background: rgba(61,184,122,0.12); color: var(--green); border: 1px solid rgba(61,184,122,0.2); }
+  .disc-s { background: rgba(74,144,217,0.12); color: var(--blue); border: 1px solid rgba(74,144,217,0.2); }
+  .disc-c { background: rgba(123,94,167,0.12); color: #a07bcc; border: 1px solid rgba(123,94,167,0.2); }
+
+  .disc-cell .disc-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--navy);
+  }
+
+  /* Voss scale */
+  .voss-scale {
+    position: relative;
+    margin: 10px 0;
+  }
+  .voss-track {
+    height: 6px;
+    background: linear-gradient(90deg, var(--green), var(--blue), var(--red));
+    border-radius: 3px;
+    margin: 20px 0 8px;
+  }
+  .voss-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gray);
+  }
+  .voss-marker {
+    position: absolute;
+    top: 16px;
+    transform: translateX(-50%);
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border: 2px solid var(--navy);
+    border-radius: 50%;
+  }
+
+  /* MICE bars */
+  .mice-rows { display: flex; flex-direction: column; gap: 8px; }
+  .mice-row { display: flex; align-items: center; gap: 10px; }
+  .mice-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    width: 60px;
+    color: var(--white);
+  }
+  .mice-dots { display: flex; gap: 4px; }
+  .mice-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+  .mice-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .mice-label { font-size: 11px; color: var(--gray); }
+
+  /* ── LECTURA CORPORAL ── */
+  .body-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .body-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 10px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .body-card.apertura { border-top: 2px solid var(--green); }
+  .body-card.cierre { border-top: 2px solid var(--red); }
+
+  .body-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .apertura .body-code { color: var(--green); }
+  .cierre .body-code { color: var(--red); }
+
+  .body-svg-wrap {
+    width: 60px;
+    height: 80px;
+    margin: 0 auto 12px;
+  }
+
+  .body-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .body-meaning {
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .body-action {
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--accent-light);
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .body-action strong {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  /* ── PROTOCOLO DE LECTURA ── */
+  .protocol-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .protocol-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .protocol-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .p5 { color: var(--green); }
+  .p20 { color: var(--accent-light); }
+  .p45 { color: var(--blue); }
+
+  .protocol-label {
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .protocol-steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .protocol-steps li {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #9db0c8;
+    line-height: 1.4;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 16px;
+    padding-top: 2px;
+  }
+
+  /* ── FAF SCORE ── */
+  .faf-explainer {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 36px;
+    align-items: center;
+  }
+
+  .faf-gauge-wrap {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+  }
+
+  .faf-gauge {
+    position: relative;
+    width: 160px;
+    height: 80px;
+    margin: 0 auto 16px;
+  }
+
+  .faf-score-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--accent-light);
+    line-height: 1;
+    margin: 8px 0 4px;
+  }
+
+  .faf-max {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--gray);
+  }
+
+  .faf-label {
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  .faf-zones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .faf-zone {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+
+  .faf-range {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 60px;
+  }
+
+  .faf-zone-info h5 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .faf-zone-info p {
+    font-size: 11px;
+    color: var(--gray);
+  }
+
+  .z-high .faf-range { color: var(--green); }
+  .z-high { border-left: 3px solid var(--green); }
+  .z-med .faf-range { color: var(--accent-light); }
+  .z-med { border-left: 3px solid var(--accent); }
+  .z-low .faf-range { color: var(--red); }
+  .z-low { border-left: 3px solid var(--red); }
+
+  /* ── ARSENAL ── */
+  .arsenal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .arsenal-card {
+    background: var(--navy-light);
+    border: 1px solid var(--gray-light);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .arsenal-card.danger {
+    border-left: 3px solid var(--red);
+    background: rgba(224,82,82,0.04);
+  }
+
+  .arsenal-card.positive {
+    border-left: 3px solid var(--green);
+  }
+
+  .arsenal-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .arsenal-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .arsenal-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 8px 0 4px;
+  }
+
+  .arsenal-card.positive .arsenal-count { color: var(--green); }
+  .arsenal-card.danger .arsenal-count { color: var(--red); }
+
+  .arsenal-desc {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 32px;
+    text-align: center;
+    border-top: 1px solid var(--gray-light);
+  }
+
+  .footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  .footer span { color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .formats-grid, .frameworks-grid, .arsenal-grid { grid-template-columns: 1fr 1fr; }
+    .protocol-grid { grid-template-columns: 1fr; }
+    .anatomy-grid { grid-template-columns: 1fr; }
+    .faf-explainer { grid-template-columns: 1fr; }
+    .body-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .formats-grid, .frameworks-grid, .arsenal-grid, .body-grid { grid-template-columns: 1fr; }
+    .section { padding: 36px 16px; }
+    .hero { padding: 40px 20px 32px; }
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-tag">CIR v4.0 · Protocolo FAF · Counterpart Intelligence</div>
+  <h1>Cómo Leer un Informe <span>CIR</span></h1>
+  <p class="hero-sub">Guía visual completa para extraer valor de cada sección del reporte de inteligencia de contrapartes.</p>
+  <div class="framework-chips">
+    <span class="chip">OCEAN</span>
+    <span class="chip">DISC</span>
+    <span class="chip">Voss</span>
+    <span class="chip">MICE</span>
+    <span class="chip">Arquetipos</span>
+    <span class="chip">Jurisprudencia</span>
+    <span class="chip">Lectura Corporal</span>
+    <span class="chip">Harvard NP</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ 01 · LOS 3 FORMATOS ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Los Tres Formatos — Cuál Usar y Cuándo</h2>
+    </div>
+    <div class="formats-grid">
+      <!-- EXTENSA -->
+      <div class="format-card extensa">
+        <div class="format-badge">EXTENSA</div>
+        <h3>Análisis Completo</h3>
+        <div class="format-time">45–60 min</div>
+        <div class="format-when">Día anterior o mañana del mismo día</div>
+        <p class="format-desc">Dominio completo del perfil: contexto, táctica, jurisprudencia y arsenal de 40 frases.</p>
+        <ul class="format-list">
+          <li>10 secciones completas</li>
+          <li>Arsenal táctico 4×10 frases</li>
+          <li>Jurisprudencia documentada</li>
+          <li>Lectura corporal 12 posturas</li>
+          <li>Mapa completo de presiones</li>
+        </ul>
+      </div>
+      <!-- MEDIA -->
+      <div class="format-card media">
+        <div class="format-badge">MEDIA</div>
+        <h3>Foco Ejecutivo</h3>
+        <div class="format-time">15–20 min</div>
+        <div class="format-when">Noche anterior a la reunión</div>
+        <p class="format-desc">Equilibrio entre profundidad y practicidad. Todo lo crítico sin exceso.</p>
+        <ul class="format-list">
+          <li>Executive Brief completo</li>
+          <li>Perfil psicológico sintético</li>
+          <li>6 posturas corporales</li>
+          <li>Movimientos de apertura</li>
+          <li>Señales de cierre y pérdida</li>
+        </ul>
+      </div>
+      <!-- MARSHALL -->
+      <div class="format-card marshall">
+        <div class="format-badge">MARSHALL</div>
+        <h3>Ultra-Compacto</h3>
+        <div class="format-time">5–10 min</div>
+        <div class="format-when">5 minutos antes de entrar a sala</div>
+        <p class="format-desc">Repaso de reflejos. Frases calibradas, señales clave y apertura lista para usar.</p>
+        <ul class="format-list">
+          <li>One-liner síntesis (60 seg)</li>
+          <li>Stats de entrada compactos</li>
+          <li>Frases calibradas por arquetipo</li>
+          <li>3 señales de cierre/pérdida</li>
+          <li>Layout ultra-denso 2-4 páginas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 02 · ANATOMÍA DEL INFORME ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Anatomía del Informe — Sección por Sección</h2>
+    </div>
+    <div class="sections-detail">
+
+      <div class="section-item">
+        <div class="section-num-big">00</div>
+        <div>
+          <h4>Portada + FAF Score</h4>
+          <p>Código del informe, circunstancia específica, y score FAF (0–50). Define cuánto puedes predecir su comportamiento. Score 40+ = alta predictibilidad. Bajo 25 = actúa con cautela, hay vacíos.</p>
+        </div>
+        <span class="priority-badge p-critical">Crítico</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">01</div>
+        <div>
+          <h4>Executive Brief — La sección más importante</h4>
+          <p>Síntesis de 60 segundos · Stats de entrada (DISC, Voss, OCEAN, FAF) · Grid verde/rojo de señales · Movimientos de apertura · El argumento que mueve la decisión. <strong style="color:var(--accent)">Siempre leer sin importar el tiempo disponible.</strong></p>
+        </div>
+        <span class="priority-badge p-critical">Crítico</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">02</div>
+        <div>
+          <h4>Perfil Psicológico — Los 5 Frameworks</h4>
+          <p>OCEAN Big Five (5 dimensiones 0–10) · DISC cuadrante conductual · Voss tipo negociador · MICE motivadores · Arquetipos conductuales con frases calibradas.</p>
+        </div>
+        <span class="priority-badge p-high">Alta</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">03</div>
+        <div>
+          <h4>Lectura Corporal en Sala</h4>
+          <p>6 posturas codificadas (3 apertura · 3 cierre). Cada una incluye código, significado y acción táctica exacta para ejecutar cuando la veas.</p>
+        </div>
+        <span class="priority-badge p-high">Alta</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">04</div>
+        <div>
+          <h4>Arsenal Táctico — 4 Tablas de 10</h4>
+          <p>Preguntas que ABREN · Afirmaciones que CONECTAN · Preguntas que CIERRAN (lista negra) · Afirmaciones que CIERRAN (lista negra). Solo en EXTENSA.</p>
+        </div>
+        <span class="priority-badge p-high">Alta</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">05</div>
+        <div>
+          <h4>Mapa de Presiones</h4>
+          <p>Contextos de vulnerabilidad decisoria con intensidad (●○○ a ●●●). Las presiones de alta intensidad indican ventanas de acción. <strong style="color:var(--accent)">La sección más infrautilizada.</strong></p>
+        </div>
+        <span class="priority-badge p-high">Alta</span>
+      </div>
+
+      <div class="section-item">
+        <div class="section-num-big">06</div>
+        <div>
+          <h4>Jurisprudencia e Inteligencia de Campo</h4>
+          <p>Historial en tribunales con roles, fechas y citas. Presencia digital por plataforma. Permite saber cómo opera bajo presión real y qué lenguaje ya consume.</p>
+        </div>
+        <span class="priority-badge p-medium">Media</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ 03 · FAF SCORE ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>FAF Score — Qué Significa el Número</h2>
+    </div>
+    <div class="faf-explainer">
+      <div class="faf-gauge-wrap">
+        <div class="faf-score-display">38</div>
+        <div class="faf-max">/ 50</div>
+        <div class="faf-label">Verificado</div>
+        <div style="margin-top:16px; font-size:11px; color:var(--gray); line-height:1.5;">
+          Ejemplo: Felipe Givovich<br>Predictibilidad media-alta
+        </div>
+      </div>
+      <div class="faf-zones">
+        <div style="font-size:13px; color:var(--gray); margin-bottom:8px;">El FAF (Fidelity Assessment Framework) mide en 5 dimensiones cuánto puedes predecir el comportamiento de la contraparte antes de entrar a sala.</div>
+        <div class="faf-zone z-high">
+          <div class="faf-range">40–50</div>
+          <div class="faf-zone-info">
+            <h5>Alta Predictibilidad</h5>
+            <p>Perfil robusto y verificado. Puedes anticipar reacciones con alta confianza. Usa el arsenal completo.</p>
+          </div>
+        </div>
+        <div class="faf-zone z-med">
+          <div class="faf-range">25–39</div>
+          <div class="faf-zone-info">
+            <h5>Predictibilidad Media</h5>
+            <p>Datos sólidos con algunos vacíos. Úsalo como guía, no como certeza. Mantén flexibilidad táctica.</p>
+          </div>
+        </div>
+        <div class="faf-zone z-low">
+          <div class="faf-range">0–24</div>
+          <div class="faf-zone-info">
+            <h5>Información Insuficiente</h5>
+            <p>Vacíos significativos. Actúa con cautela. Prioriza escuchar y calibrar antes de ejecutar táctica.</p>
+          </div>
+        </div>
+        <div style="background:var(--navy-light); border:1px solid var(--gray-light); border-radius:8px; padding:14px 16px; margin-top:4px;">
+          <div style="font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Las 5 Dimensiones del Score</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11px; color:var(--gray);">
+            <div>① Identidad institucional</div>
+            <div>② Tono verbal</div>
+            <div>③ Arquitectura cognitiva</div>
+            <div>④ Patrones estratégicos</div>
+            <div>⑤ Mapa de presiones</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 04 · LOS FRAMEWORKS ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Los Frameworks — Cómo Leer Cada Uno</h2>
+    </div>
+    <div class="frameworks-grid">
+
+      <!-- OCEAN -->
+      <div class="framework-card">
+        <div class="fw-header">
+          <div class="fw-icon fw-ocean">O</div>
+          <div>
+            <div class="fw-name">OCEAN Big Five</div>
+            <div class="fw-sub">5 dimensiones · Escala 0–10</div>
+          </div>
+        </div>
+        <p class="fw-body-text">Mide rasgos de personalidad estables. Lo que importa son los extremos (8–10 o 1–3), no los valores medios.</p>
+        <div class="ocean-bars">
+          <div class="ocean-row"><span class="ocean-label">O</span><div class="ocean-bar-bg"><div class="ocean-bar-fill" style="width:60%"></div></div><span class="ocean-val">6</span></div>
+          <div class="ocean-row"><span class="ocean-label">C</span><div class="ocean-bar-bg"><div class="ocean-bar-fill" style="width:90%; background:linear-gradient(90deg,#c9a84c,#e8c97a)"></div></div><span class="ocean-val" style="color:#e8c97a">9 ←</span></div>
+          <div class="ocean-row"><span class="ocean-label">E</span><div class="ocean-bar-bg"><div class="ocean-bar-fill" style="width:40%"></div></div><span class="ocean-val">4</span></div>
+          <div class="ocean-row"><span class="ocean-label">A</span><div class="ocean-bar-bg"><div class="ocean-bar-fill" style="width:40%"></div></div><span class="ocean-val">4</span></div>
+          <div class="ocean-row"><span class="ocean-label">N</span><div class="ocean-bar-bg"><div class="ocean-bar-fill" style="width:30%; background:linear-gradient(90deg,#3db87a,#5fcf95)"></div></div><span class="ocean-val" style="color:#3db87a">3 ←</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          C=9 → Exige metodología detallada · N=3 → Estable, no cae con urgencia artificial
+        </div>
+      </div>
+
+      <!-- DISC -->
+      <div class="framework-card">
+        <div class="fw-header">
+          <div class="fw-icon fw-disc">D</div>
+          <div>
+            <div class="fw-name">DISC</div>
+            <div class="fw-sub">Cuadrante conductual · Primario + Emergente</div>
+          </div>
+        </div>
+        <p class="fw-body-text">Cómo se comporta en situaciones de trabajo. El punto indica posición actual; el perfil emergente indica hacia dónde se mueve.</p>
+        <div class="disc-matrix">
+          <div class="disc-cell disc-d">
+            <span>D</span>
+            <span style="font-size:8px; position:absolute; bottom:4px; color:#e05252; opacity:0.7">Resultados</span>
+          </div>
+          <div class="disc-cell disc-i">
+            <span>I</span>
+            <span style="font-size:8px; position:absolute; bottom:4px; color:#3db87a; opacity:0.7">Personas</span>
+          </div>
+          <div class="disc-cell disc-s">
+            <span>S</span>
+            <span style="font-size:8px; position:absolute; bottom:4px; color:#4a90d9; opacity:0.7">Continuidad</span>
+          </div>
+          <div class="disc-cell disc-c" style="position:relative">
+            <span>C</span>
+            <div class="disc-dot" style="top:50%; left:50%; transform:translate(-50%,-50%)"></div>
+            <span style="font-size:8px; position:absolute; bottom:4px; color:#a07bcc; opacity:0.7">Exactitud</span>
+          </div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          Punto en C → Habla de metodología, no de resultados. D emergente → Cada vez más directivo.
+        </div>
+      </div>
+
+      <!-- VOSS -->
+      <div class="framework-card">
+        <div class="fw-header">
+          <div class="fw-icon fw-voss">V</div>
+          <div>
+            <div class="fw-name">Voss Negotiation Type</div>
+            <div class="fw-sub">3 posiciones · Chris Voss</div>
+          </div>
+        </div>
+        <p class="fw-body-text">Define cómo toma decisiones de negociación. Es la dimensión más accionable en sala.</p>
+        <div class="voss-scale">
+          <div class="voss-track">
+            <div class="voss-marker" style="left:85%"></div>
+          </div>
+          <div class="voss-labels">
+            <span>ACCOMMODATOR<br>Relación/Confianza</span>
+            <span style="text-align:center">ASSERTIVE<br>Dominio/Presión</span>
+            <span style="text-align:right">ANALYST<br>Post-evidencia</span>
+          </div>
+        </div>
+        <div style="margin-top:16px; font-size:11px; color:var(--gray); line-height:1.6;">
+          <strong style="color:var(--accent)">Si es ANALYST:</strong> Silencio = procesamiento (no rechazo). Su "sí" llega tarde pero es vinculante. Dale datos antes de hablar de beneficios.
+        </div>
+      </div>
+
+      <!-- MICE -->
+      <div class="framework-card">
+        <div class="fw-header">
+          <div class="fw-icon fw-mice">M</div>
+          <div>
+            <div class="fw-name">MICE</div>
+            <div class="fw-sub">4 motivadores · Intensidad variable</div>
+          </div>
+        </div>
+        <p class="fw-body-text">Qué lo mueve a actuar. El motivador de mayor intensidad es la palanca principal de la negociación.</p>
+        <div class="mice-rows">
+          <div class="mice-row">
+            <span class="mice-key">Money</span>
+            <div class="mice-dots"><div class="mice-dot filled"></div><div class="mice-dot"></div><div class="mice-dot"></div><div class="mice-dot"></div><div class="mice-dot"></div></div>
+            <span class="mice-label">Baja → ROI, costo</span>
+          </div>
+          <div class="mice-row">
+            <span class="mice-key">Ideology</span>
+            <div class="mice-dots"><div class="mice-dot filled"></div><div class="mice-dot filled"></div><div class="mice-dot filled"></div><div class="mice-dot filled"></div><div class="mice-dot"></div></div>
+            <span class="mice-label" style="color:var(--accent-light)">Alta → Principios</span>
+          </div>
+          <div class="mice-row">
+            <span class="mice-key">Coercion</span>
+            <div class="mice-dots"><div class="mice-dot filled"></div><div class="mice-dot filled"></div><div class="mice-dot"></div><div class="mice-dot"></div><div class="mice-dot"></div></div>
+            <span class="mice-label">Media → Urgencia</span>
+          </div>
+          <div class="mice-row">
+            <span class="mice-key">Ego</span>
+            <div class="mice-dots"><div class="mice-dot filled"></div><div class="mice-dot filled"></div><div class="mice-dot"></div><div class="mice-dot"></div><div class="mice-dot"></div></div>
+            <span class="mice-label">Media → Status</span>
+          </div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--gray);">
+          Palanca dominante = Ideology → Habla de metodología y rigor, no de precio.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ 05 · LECTURA CORPORAL ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Lectura Corporal — Cómo Usarlo en Sala Real</h2>
+    </div>
+    <div class="body-grid">
+
+      <!-- APERTURA 1 -->
+      <div class="body-card apertura">
+        <div class="body-code">A·01 — APERTURA</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="18" x2="30" y2="50" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="15" y2="38" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="45" y2="20" stroke="#3db87a" stroke-width="1.5"/>
+            <rect x="40" y="18" width="12" height="8" rx="1" stroke="#3db87a" stroke-width="1" fill="rgba(61,184,122,0.1)"/>
+            <line x1="30" y1="50" x2="20" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="40" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Inclinación + Libreta</div>
+        <div class="body-meaning">Engagement activo, modo captura de información</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          Mantén ritmo pausado, permite que complete notas
+        </div>
+      </div>
+
+      <!-- APERTURA 2 -->
+      <div class="body-card apertura">
+        <div class="body-code">A·02 — APERTURA</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#3db87a" stroke-width="1.5"/>
+            <circle cx="26" cy="9" r="1.5" fill="#3db87a"/>
+            <circle cx="34" cy="9" r="1.5" fill="#3db87a"/>
+            <line x1="30" y1="18" x2="30" y2="50" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="10" y2="36" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="50" y2="36" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="20" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="40" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Contacto Visual Sostenido</div>
+        <div class="body-meaning">Evaluación crítica activa — mide credibilidad</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          No desvíes la mirada, mantén afirmaciones respaldables
+        </div>
+      </div>
+
+      <!-- APERTURA 3 -->
+      <div class="body-card apertura">
+        <div class="body-code">A·03 — APERTURA</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="18" x2="30" y2="50" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="15" y2="42" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="45" y2="42" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="15" y1="42" x2="22" y2="44" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="45" y1="42" x2="38" y2="44" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="20" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="40" y2="70" stroke="#3db87a" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Manos Entrelazadas</div>
+        <div class="body-meaning">Postura neutra-receptiva, espera información</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          Procede con agenda sin sobre-interpretar como positivo
+        </div>
+      </div>
+
+      <!-- CIERRE 1 -->
+      <div class="body-card cierre">
+        <div class="body-code">C·01 — CIERRE</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="18" x2="28" y2="50" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="28" y1="30" x2="15" y2="36" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="28" y1="30" x2="42" y2="36" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="15" y1="44" x2="38" y2="44" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="28" y1="50" x2="18" y2="70" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="28" y1="50" x2="38" y2="70" stroke="#e05252" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Asiente Mirando sus Notas</div>
+        <div class="body-meaning">Conecta lo dicho con reflexiones propias — señal positiva</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          Pregunta: "¿Qué parte te parece más relevante?"
+        </div>
+      </div>
+
+      <!-- CIERRE 2 -->
+      <div class="body-card cierre">
+        <div class="body-code">C·02 — CIERRE</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="18" x2="30" y2="50" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="15" y2="32" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="45" y2="32" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="15" y1="32" x2="45" y2="32" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="20" y2="70" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="40" y2="70" stroke="#e05252" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Brazos Cruzados</div>
+        <div class="body-meaning">Evaluación crítica activa o escepticismo</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          Pausa y pregunta: "¿Qué preocupación no hemos abordado?"
+        </div>
+      </div>
+
+      <!-- CIERRE 3 -->
+      <div class="body-card cierre">
+        <div class="body-code">C·03 — CIERRE</div>
+        <div class="body-svg-wrap">
+          <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="10" r="8" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="18" x2="30" y2="50" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="14" y2="38" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="28" x2="46" y2="24" stroke="#e05252" stroke-width="1.5"/>
+            <circle cx="48" cy="22" r="5" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="44" y1="22" x2="52" y2="22" stroke="#e05252" stroke-width="1"/>
+            <line x1="48" y1="18" x2="48" y2="22" stroke="#e05252" stroke-width="1"/>
+            <line x1="30" y1="50" x2="20" y2="70" stroke="#e05252" stroke-width="1.5"/>
+            <line x1="30" y1="50" x2="40" y2="70" stroke="#e05252" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body-label">Mira el Reloj</div>
+        <div class="body-meaning">Desconexión o presión de tiempo real</div>
+        <div class="body-action">
+          <strong>Acción Táctica</strong>
+          Cierra con pregunta directa sobre próximo paso
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ 06 · ARSENAL TÁCTICO ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Arsenal Táctico — Las 4 Tablas</h2>
+    </div>
+    <div class="arsenal-grid">
+      <div class="arsenal-card positive">
+        <div class="arsenal-icon">💬</div>
+        <div class="arsenal-title">Preguntas que ABREN</div>
+        <div class="arsenal-count">10</div>
+        <p class="arsenal-desc">Preguntas diseñadas para generar engagement, activar reflexión y abrir el proceso de compra.</p>
+        <div style="margin-top:14px; font-size:11px; color:var(--accent); border-top:1px solid var(--gray-light); padding-top:10px;">USO: Primeros 15 minutos</div>
+      </div>
+      <div class="arsenal-card positive">
+        <div class="arsenal-icon">🤝</div>
+        <div class="arsenal-title">Afirmaciones que CONECTAN</div>
+        <div class="arsenal-count">10</div>
+        <p class="arsenal-desc">Frases que construyen confianza y validan la perspectiva del interlocutor sin ceder terreno.</p>
+        <div style="margin-top:14px; font-size:11px; color:var(--accent); border-top:1px solid var(--gray-light); padding-top:10px;">USO: A lo largo de la reunión</div>
+      </div>
+      <div class="arsenal-card danger">
+        <div class="arsenal-icon">⚠️</div>
+        <div class="arsenal-title">Preguntas que CIERRAN</div>
+        <div class="arsenal-count">10</div>
+        <p class="arsenal-desc"><strong>LISTA NEGRA.</strong> Preguntas que dañan la negociación. Memorizarlas para no decirlas.</p>
+        <div style="margin-top:14px; font-size:11px; color:var(--red); border-top:1px solid rgba(224,82,82,0.2); padding-top:10px;">⚠️ TAN CRÍTICO COMO LAS POSITIVAS</div>
+      </div>
+      <div class="arsenal-card danger">
+        <div class="arsenal-icon">🚫</div>
+        <div class="arsenal-title">Afirmaciones que CIERRAN</div>
+        <div class="arsenal-count">10</div>
+        <p class="arsenal-desc"><strong>LISTA NEGRA.</strong> Frases que activan resistencia o rechazo. Evitarlas activamente.</p>
+        <div style="margin-top:14px; font-size:11px; color:var(--red); border-top:1px solid rgba(224,82,82,0.2); padding-top:10px;">⚠️ TAN CRÍTICO COMO LAS POSITIVAS</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 07 · PROTOCOLO DE LECTURA ══ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Protocolo de Lectura por Tiempo Disponible</h2>
+    </div>
+    <div class="protocol-grid">
+
+      <div class="protocol-card">
+        <div class="protocol-time p5">5 min</div>
+        <div class="protocol-label">Modo emergencia · Marshall</div>
+        <ul class="protocol-steps">
+          <li><span class="step-num">01</span>Síntesis de 60 segundos (memorízala)</li>
+          <li><span class="step-num">02</span>Los 3 movimientos de apertura</li>
+          <li><span class="step-num">03</span>El argumento que mueve la decisión</li>
+          <li><span class="step-num">04</span>1 señal de pérdida (qué evitar)</li>
+        </ul>
+      </div>
+
+      <div class="protocol-card">
+        <div class="protocol-time p20">20 min</div>
+        <div class="protocol-label">Modo estándar · Media</div>
+        <ul class="protocol-steps">
+          <li><span class="step-num">01</span>Todo el protocolo de 5 min</li>
+          <li><span class="step-num">02</span>Perfil Voss completo</li>
+          <li><span class="step-num">03</span>Señales de cierre (✓) y pérdida (✗)</li>
+          <li><span class="step-num">04</span>Frases calibradas de arquetipos</li>
+          <li><span class="step-num">05</span>3 preguntas de la lista negra</li>
+        </ul>
+      </div>
+
+      <div class="protocol-card">
+        <div class="protocol-time p45">45 min</div>
+        <div class="protocol-label">Modo dominio · Extensa</div>
+        <ul class="protocol-steps">
+          <li><span class="step-num">01</span>Todo el protocolo de 20 min</li>
+          <li><span class="step-num">02</span>OCEAN completo con implicaciones</li>
+          <li><span class="step-num">03</span>MICE → confirmar palanca principal</li>
+          <li><span class="step-num">04</span>Arsenal táctico completo (4 tablas)</li>
+          <li><span class="step-num">05</span>Jurisprudencia → historial bajo presión</li>
+          <li><span class="step-num">06</span>Mapa de presiones → ventanas de acción</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="footer">
+  <p><span>CIR v4.0</span> · Protocolo FAF · Sistema de Inteligencia de Contrapartes · <span>2026</span></p>
+</div>
+
+</body>
+</html>
