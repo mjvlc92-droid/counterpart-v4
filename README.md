@@ -110,11 +110,61 @@ counterpart/
 ```
 
 **Data flow:**
-```
-User fills form → CandidateForm → CopilotKit → LangGraph agent
-  → analyze_and_train (archetype + probability tree + opening)
-  → SparringChat → FastAPI SSE /api/sparring/stream → Claude streams says/thinks/signal
-  → end_training → SessionScorecard
+
+```mermaid
+flowchart TD
+    USER(["👤 User\nobservable behavioral signals\nno PII · no name required"])
+    FORM["CandidateForm\nrawInput · objective · role"]
+    USER --> FORM
+
+    subgraph AAT["🔬 analyze_and_train  ·  one-shot pipeline"]
+        direction LR
+        AM["match_archetype\nDISC · OCEAN · Voss · MICE\nconfidence %"]
+        AJ[("archetypes.json\n10 types × 18 attrs")]
+        DS["decide_opening_speaker\nheuristic — no LLM"]
+        PAR{{"⚡ parallel"}}
+        GT["generate_tree\nMermaid probability tree"]
+        GL["_generate_opening_line\nin-character opening"]
+        AM -. "lookup" .-> AJ
+        AJ -. "Archetype object" .-> AM
+        AM --> DS --> PAR --> GT & GL
+    end
+
+    STATE["AgentState  ·  LangGraph MemorySaver\nidle → archetype_detected → tree_generated\n→ training → complete"]
+
+    VIZ["📊 Frontend Visualization\nProbability Tree · Cognitive Map\nArchetype profile · Key argument"]
+
+    subgraph SPAR["⚔️ SparringChat  ·  FastAPI SSE"]
+        direction TB
+        SMSG["user message"]
+        SSTM["POST /api/sparring/stream"]
+        SPRS["build_sparring_messages\nsystem prompt + persona + history"]
+        CLD["Claude claude-sonnet-4-6\nstreaming · 600 tokens max"]
+        EVTS["SSE events\n{type:chunk, text:word} × N\n{type:done, says, thinks, signal}"]
+        REND["Frontend renders\n• says — verbal response  (real-time)\n• thinks — inner monologue  (1.2s delay)\n• signal — non-verbal cue"]
+        SMSG --> SSTM --> SPRS --> CLD --> EVTS --> REND
+        REND --"next turn"--> SMSG
+    end
+
+    subgraph ET["🎓 end_training  ·  session debrief"]
+        direction LR
+        EX["exit signal\n'listo' · 'terminar' · I'm done"]
+        SC["_compute_session_score\nkey_lever hits · turn count\nbranch-specific language"]
+        RT["regenerate_tree_from_transcript\nrecalibrated probability tree"]
+        CARD["SessionScorecard\nscore /100 · strengths · improvements"]
+        EX --> SC & RT --> CARD
+    end
+
+    MCP["🔧 MCP Server  :3001\nTypeScript archetype tools\nmcp-use · Zod"]
+
+    FORM -- "CopilotKit  POST /copilotkit" --> AAT
+    AAT --> STATE
+    STATE -- "streaming messages" --> VIZ
+    VIZ -- "mode: training" --> SPAR
+    SPAR -- "exit phrase detected" --> ET
+    ET -- "mode: complete" --> STATE
+    ET -. "reset → new session" .-> FORM
+    MCP -. "archetype tools" .-> VIZ
 ```
 
 ---
